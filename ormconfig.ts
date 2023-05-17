@@ -1,4 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { join } from 'path';
 
 export const ConnectionConfig: TypeOrmModuleOptions = {
   type: 'postgres',
@@ -7,6 +8,7 @@ export const ConnectionConfig: TypeOrmModuleOptions = {
   username: 'postgres',
   password: '',
   database: 'chimuelo_admin',
-  synchronize: false,
-  entities: ['./src/**/*.entity.ts', './dist/**/*.entity.js'],
+  synchronize: true,
+  logging: true,
+  entities: [join(__dirname, '**', '*.entity.{ts,js}')],
 };
