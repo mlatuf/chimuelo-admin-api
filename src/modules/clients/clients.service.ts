@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { CreateClientDto } from './dto/create-client.dto';
-import { UpdateClientDto } from './dto/update-client.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { Client } from './entities/client.entity';
+
+import { ClientDto } from './dto/client.dto';
 
 @Injectable()
 export class ClientsService {
-  create(createClientDto: CreateClientDto) {
-    return 'This action adds a new client';
+  constructor(
+    @InjectRepository(Client) private clientRepository: Repository<Client>,
+  ) {}
+
+  async create(clientDto: ClientDto) {
+    const client = await this.clientRepository.create(clientDto);
+    await this.clientRepository.save(client);
+    return client;
   }
 
-  findAll() {
-    return `This action returns all clients`;
+  async findAll() {
+    return await this.clientRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} client`;
+  async findOne(id: string) {
+    return await this.clientRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
+  async update(id: string, clientDto: Partial<ClientDto>) {
+    await this.clientRepository.update({ id }, clientDto);
+    return await this.clientRepository.findOne({ where: { id } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+  async remove(id: string) {
+    await this.clientRepository.delete({ id });
+    return { deleted: true };
   }
 }
